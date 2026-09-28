@@ -25,8 +25,12 @@ with_timeout() {  # with_timeout <seconds> cmd...; macOS has no `timeout` unless
   else "$@"; fi
 }
 
-in_pty() {  # in_pty <typescript-file> cmd...; BSD and util-linux `script` differ
-  local out=$1; shift
+in_pty() {  # in_pty <typescript-file> <seconds> cmd...; BSD and util-linux `script` differ
+  # The timeout goes inside the pty, on the real command: `timeout` is an external binary and
+  # cannot run this shell function.
+  local out=$1 t=$2; shift 2
+  if command -v timeout >/dev/null; then set -- timeout "$t" "$@"
+  elif command -v gtimeout >/dev/null; then set -- gtimeout "$t" "$@"; fi
   case "$(uname -s)" in
     Darwin|*BSD) script -q "$out" "$@" ;;
     *) script -q -e -c "$(printf '%q ' "$@")" "$out" ;;
@@ -112,7 +116,7 @@ EOF
 
   # --cloud refuses --print; a pseudo-terminal lets the interactive create run unattended.
   local rc=0
-  (cd "$run/repo" && CCR_FORCE_BUNDLE=1 with_timeout 300 in_pty "$run/create.typescript" \
+  (cd "$run/repo" && CCR_FORCE_BUNDLE=1 in_pty "$run/create.typescript" 300 \
       "$bin" --model "$model" --cloud "$(cat "$run/prompt.md")" < /dev/null > /dev/null 2>&1) || rc=$?
   local session
   session=$(LC_ALL=C grep -a -o 'session_[A-Za-z0-9]*' "$run/create.typescript" | head -1 || true)
