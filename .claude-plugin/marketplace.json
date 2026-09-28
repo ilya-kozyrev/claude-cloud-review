@@ -1,0 +1,14 @@
+{
+  "name": "cloud-review",
+  "description": "Code review in Claude Code cloud sessions for GitLab, Bitbucket or any git host",
+  "owner": {
+    "name": "Ilya Kozyrev"
+  },
+  "plugins": [
+    {
+      "name": "cloud-review",
+      "source": "./plugins/cloud-review",
+      "description": "Send a committed branch from any git host to a Claude Code cloud session for a read-only review and get final.md back"
+    }
+  ]
+}
