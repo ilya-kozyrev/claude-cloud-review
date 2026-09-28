@@ -183,11 +183,17 @@ cmd_clean() {
   echo "cleaned: $run (meta, prompt, final.md kept)"
 }
 
-case "${1:-}" in
-  run) shift; cmd_run "$@" ;;
-  fetch) shift; cmd_fetch "$@" ;;
-  wait) shift; cmd_wait "$@" ;;
-  clean) shift; cmd_clean "$@" ;;
-  -h|--help|"") usage ;;
-  *) usage; exit 1 ;;
-esac
+main() {
+  case "${1:-}" in
+    run) shift; cmd_run "$@" ;;
+    fetch) shift; cmd_fetch "$@" ;;
+    wait) shift; cmd_wait "$@" ;;
+    clean) shift; cmd_clean "$@" ;;
+    -h|--help|"") usage ;;
+    *) usage; exit 1 ;;
+  esac
+}
+
+# One line, read whole before it runs: bash reads a script as it executes, so a copy of this file
+# overwritten during a long `wait` must not be read past this point.
+main "$@"; exit $?

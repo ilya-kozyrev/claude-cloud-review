@@ -1,6 +1,6 @@
 {
   "name": "cloud-review",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Send a committed branch from any git host to a Claude Code cloud session for a read-only review and get final.md back",
   "author": {
     "name": "Ilya Kozyrev"
